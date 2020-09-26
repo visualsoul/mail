@@ -7,23 +7,49 @@ textarea {
     font-weight: bold;
 }
 
-
-/*
-#inbox-header span:nth-child(3) {
-  background: white;
+#email-body {
+    font-size: 18px;
+    font-weight: normal;
 }
-*/
 
+#email-header {
+    font-size: 18px;
+}
+
+#email-header span {
+    font-weight: bold;
+
+}
 
 #inbox-header {
     margin-left: 1px;
     width: 90%;
     border: 1px solid darkslategray;
     background-color: lightblue;
+    height: 40px;
+    padding-top:6px;
+}
+
+#unread, #read {
+    width: 90%;
+    margin-left: 1px;
+    height: 36px;
+    padding-top: 3px;
 }
 
 #unread {
-    margin-left: 1px;
-    width: 90%;
     border: 1px solid darkslategray;
+    background-color: white;
+    font-weight: bold;
 }
+
+#read {
+    border: 1px solid darkslategray;
+    background-color: lightgray;
+    font-weight: normal;
+}
+
+#unread:hover, #read:hover {
+    border: 2px solid black;
+}
+

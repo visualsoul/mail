@@ -6,13 +6,60 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
 
+
   // By default, load the inbox
   load_mailbox('inbox');
 });
 
+
+function view_email(email_id) {
+    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#compose-view').style.display = 'none';
+    document.querySelector('#email-view').style.display = 'block';
+
+    const div = document.querySelector('#email-view');
+    // clear div
+    div.innerHTML = '';
+
+    // Change entry in the DB and mark email as read
+    fetch(`/emails/${email_id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+          read: true
+      })
+    });
+
+
+    fetch(`/emails/${email_id}`)
+        .then(response => response.json())
+        .then(email => {
+
+        // Add HTML elements with information
+        console.log(email);
+        const header = document.createElement('div');
+        header.innerHTML = `<span>From: </span>${email['sender']}<br>
+                            <span>To: </span>${email['recipients'].join('; ')}<br>
+                            <span>Subject: </span>${email['subject']}<br>
+                            <span>Date: </span>${email['timestamp']}<br>
+                            <button class="btn btn-sm btn-outline-primary" id="reply">Reply</button>
+                            <button class="btn btn-sm btn-outline-primary" id="archive">Archive</button><br>
+                            <hr>
+                            <div id="email-body">${email['body']}</div>`;
+        header.id = "email-header";
+        div.append(header);
+        });
+
+    //TODO:  Add event handlers for Reply and Archive Buttons
+
+
+
+}
+
+
 function compose_email() {
 
   // Show compose view and hide other views
+  document.querySelector('#email-view').style.display = 'none';
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
@@ -20,6 +67,28 @@ function compose_email() {
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
+
+  document.querySelector('#submit_mail').addEventListener('click', () => {
+      fetch('/emails', {
+      method: 'POST',
+      body: JSON.stringify({
+      recipients: document.querySelector('#compose-recipients').value,
+      subject: document.querySelector('#compose-subject').value,
+      body: document.querySelector('#compose-body').value
+        })
+        })
+        .then(response => response.json())
+        .then(result => {
+        // Print result
+        console.log(result);
+    });
+
+
+  });
+
+
+
+
 }
 
 function load_mailbox(mailbox) {
@@ -27,6 +96,7 @@ function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#email-view').style.display = 'none';
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
@@ -57,12 +127,22 @@ function load_mailbox(mailbox) {
           if(item['read'] === false){
             div.id = 'unread';
             div.className = 'row';
+            div.style = "cursor: pointer";
             div.innerHTML = `<span id="inbox-sender" class="col-4">${item['sender']}</span><span class="col-4">${item['subject']}</span><span class="col-4">${item['timestamp']}</span>`;
           }
           else {
             div.id = 'read';
-            div.innerHTML = item['sender'];
+            div.className = 'row';
+            div.style = "cursor: pointer";
+            div.innerHTML = `<span id="inbox-sender" class="col-4">${item['sender']}</span><span class="col-4">${item['subject']}</span><span class="col-4">${item['timestamp']}</span>`;
           }
+
+
+          // Tell browser what to do when user clicks on the email listing
+          div.addEventListener("click", () => {
+              //console.log(`click: ${item['id']}`);
+              view_email(item['id']);
+          });
           emails_view.append(div);
       }
 
@@ -72,5 +152,7 @@ function load_mailbox(mailbox) {
 
 
 });
+
+
 
 }
