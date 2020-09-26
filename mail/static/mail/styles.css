@@ -1,3 +1,29 @@
 textarea {
     min-height: 400px;
 }
+
+
+#inbox-header span {
+    font-weight: bold;
+}
+
+
+/*
+#inbox-header span:nth-child(3) {
+  background: white;
+}
+*/
+
+
+#inbox-header {
+    margin-left: 1px;
+    width: 90%;
+    border: 1px solid darkslategray;
+    background-color: lightblue;
+}
+
+#unread {
+    margin-left: 1px;
+    width: 90%;
+    border: 1px solid darkslategray;
+}
