@@ -137,7 +137,7 @@ function load_mailbox(mailbox) {
       const div = document.createElement('div');
 
       // add items to inbox which are not archived
-      if(item['archived'] === false ){
+
           if(item['read'] === false){
             div.id = 'unread';
             div.className = 'row';
@@ -158,7 +158,8 @@ function load_mailbox(mailbox) {
               view_email(item['id']);
           });
           emails_view.append(div);
-      }
+
+
 
     }
 
