@@ -6,47 +6,37 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
 
+  document.querySelector('#compose-form').addEventListener("submit" , (event) => send_email(event));
+
 
   // By default, load the inbox
   load_mailbox('inbox');
 
-  // On Submit listener for the #compose-form
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
-  document.querySelector('#compose-form').onsubmit = () => {
-    let recipients = document.querySelector('#compose-recipients').value;
-    let subject = document.querySelector('#compose-subject').value;
-    let body = document.querySelector('#compose-body').value;
-
-    // POST email to API
-    fetch('/emails', {
-      method: 'POST',
-      body: JSON.stringify({
-        recipients: recipients,
-        subject: subject,
-        body: body
-      })
-    })
-      .then(response => response.json())
-      .then(result => {
-        // Print result
-        console.log(result);
-
-
-        load_mailbox('sent');
-      });
-      document.querySelector('#compose-recipients').value = '';
-      document.querySelector('#compose-subject').value = '';
-      document.querySelector('#compose-body').value = '';
-    return false;
-    window.location.reload();
-    load_mailbox('sent');
-  }
-
 });
 
-
+function send_email(event){
+    event.preventDefault();
+    console.log("starting email sending request");
+    fetch('/emails',
+    {
+      method : 'POST',
+      body : JSON.stringify({
+        recipients: document.querySelector('#compose-recipients').value,
+        subject: document.querySelector('#compose-subject').value,
+        body: document.querySelector('#compose-body').value
+      })
+    })
+    .then(response => response.json())
+    .then(result => {
+        // Print result
+        //console.log(result);
+          document.querySelector('#compose-recipients').value = '';
+          document.querySelector('#compose-subject').value = '';
+          document.querySelector('#compose-body').value = '';
+          load_mailbox('sent');
+    });
+    return false;
+}
 
 function compose_email() {
   // Show compose view and hide other views
@@ -62,11 +52,11 @@ function compose_email() {
 }
 
 
-
 function view_email(email_id) {
+    document.querySelector('#email-view').style.display = 'block';
     document.querySelector('#emails-view').style.display = 'none';
     document.querySelector('#compose-view').style.display = 'none';
-    document.querySelector('#email-view').style.display = 'block';
+
 
     const div = document.querySelector('#email-view');
     // clear div
@@ -96,33 +86,53 @@ function view_email(email_id) {
                             <button class="btn btn-sm btn-outline-primary" id="archive">Archive</button><br>
                             <hr>
                             <div id="email-body">${email['body']}</div>`;
-        header.id = "email-header";
 
+        header.id = "email-header";
 
         div.append(header);
 
-        document.querySelector('#archive').addEventListener('click', () => {
-            fetch(`/emails/${email_id}`, {
-              method: 'PUT',
-              body: JSON.stringify({
-                  archived: true
-              })
+        // Check if email is archived if so change the Archive to Un-Archive and id archive to id unarchive
+        if (email['archived'] === true) {
+            document.querySelector('#archive').innerHTML = 'Un-Archive';
+            document.querySelector('#archive').id = 'unarchive';
+              // if user clicks on unarchive it will change the archived to false
+                document.querySelector('#unarchive').addEventListener('click', () => {
+                fetch(`/emails/${email_id}`, {
+                  method: 'PUT',
+                  body: JSON.stringify({
+                      archived: false
+                  })
 
-            })
+                })
+                setTimeout(function() { load_mailbox('inbox'); }, 250);
+
+            });
+         }
+        else {
+            // if clicked on archive it will change archived to true
+                document.querySelector('#archive').addEventListener('click', () => {
+                fetch(`/emails/${email_id}`, {
+                  method: 'PUT',
+                  body: JSON.stringify({
+                      archived: true
+                  })
+
+                })
+                // load_mailbox('archive');
+                setTimeout(function() { load_mailbox('archive'); }, 250);
+
+            });
+        }
 
 
-        });
 
-        });
+     });
 
 
-    //TODO:  Add event handlers for Reply and Archive Buttons
-    load_mailbox('inbox');
 }
 
 
 function load_mailbox(mailbox) {
-
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
