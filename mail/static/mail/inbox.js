@@ -32,7 +32,18 @@ function send_email(event){
           document.querySelector('#compose-recipients').value = '';
           document.querySelector('#compose-subject').value = '';
           document.querySelector('#compose-body').value = '';
-          load_mailbox('sent');
+          document.querySelector('#error-message').innerHTML = '';
+          if (result['error']) {
+              console.log(result['error']);
+              document.querySelector('#error-message').innerHTML = "Error: " + result['error'];
+
+          }
+          else {
+              document.querySelector('#error-message').innerHTML = '';
+              load_mailbox('sent');
+          }
+
+
     });
     return false;
 }
@@ -70,12 +81,13 @@ function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
-  document.querySelector('#display-view').style.display = 'none';
+  document.querySelector('#email-view').style.display = 'none';
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
+  document.querySelector('#error-message').innerHTML = '';
 
 }
 
@@ -201,7 +213,7 @@ function load_mailbox(mailbox) {
 
     // ... Create divs for each inbox item ...
     function createInboxList(item) {
-      console.log(item);
+      // console.log(item);
       const emails_view = document.querySelector('#emails-view');
       const div = document.createElement('div');
 

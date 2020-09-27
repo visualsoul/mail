@@ -2,6 +2,14 @@ textarea {
     min-height: 400px;
 }
 
+#error-message {
+    font-size: 18px;
+    color: lightyellow;
+    background-color: darkred;
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+}
 
 #inbox-header span {
     font-weight: bold;
@@ -56,3 +64,4 @@ textarea {
 #emails-view {
     padding-bottom: 40px;
 }
+
