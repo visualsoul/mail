@@ -62,6 +62,9 @@ function view_email(email_id) {
     // clear div
     div.innerHTML = '';
 
+    const username = document.querySelector('#username').innerHTML;
+    // console.log(username);
+
     // Change entry in the DB and mark email as read
     fetch(`/emails/${email_id}`, {
       method: 'PUT',
@@ -90,7 +93,7 @@ function view_email(email_id) {
         header.id = "email-header";
 
         div.append(header);
-
+        console.log(`${username} === ${email.sender} ==> ${username === email.sender}`);
         // Check if email is archived if so change the Archive to Un-Archive and id archive to id unarchive
         if (email['archived'] === true) {
             document.querySelector('#archive').innerHTML = 'Un-Archive';
@@ -124,6 +127,11 @@ function view_email(email_id) {
             });
         }
 
+
+        // disable Archive button if user === sender since this is not required
+        if (username === email.sender) {
+            document.querySelector('#archive').remove();
+        }
 
 
      });
