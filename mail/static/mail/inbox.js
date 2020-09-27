@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function send_email(event){
     event.preventDefault();
-    console.log("starting email sending request");
     fetch('/emails',
     {
       method : 'POST',
@@ -38,6 +37,35 @@ function send_email(event){
     return false;
 }
 
+function reply(email) {
+    console.log('Replying..');
+
+      // Show the mailbox and hide other views
+    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#compose-view').style.display = 'block';
+    document.querySelector('#email-view').style.display = 'none';
+
+
+    document.querySelector('#emails-view').innerHTML = `<h3>New Email</h3>`;
+
+    // prefill the form:
+    const sender = email.sender;
+    let subject = email.subject;
+    let body = email.body;
+
+    // check for 'RE:'
+    if (subject.substring(0,3) !== 'RE:') {
+        subject = 'RE: ' + subject;
+    }
+    // format email body as per assignment
+    body = `\n \n On ${email.timestamp}, ${sender} wrote: \n ${body}`;
+
+    document.querySelector('#compose-recipients').value = sender;
+    document.querySelector('#compose-subject').value = subject;
+    document.querySelector('#compose-body').value = body;
+}
+
+
 function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
@@ -56,6 +84,7 @@ function view_email(email_id) {
     document.querySelector('#email-view').style.display = 'block';
     document.querySelector('#emails-view').style.display = 'none';
     document.querySelector('#compose-view').style.display = 'none';
+
 
 
     const div = document.querySelector('#email-view');
@@ -79,7 +108,11 @@ function view_email(email_id) {
         .then(email => {
 
         // Add HTML elements with information
-        console.log(email);
+        // console.log(email);
+
+        // format email body for html
+        let email_body = email.body.replace('\n', '<br>')
+
         const header = document.createElement('div');
         header.innerHTML = `<span>From: </span>${email['sender']}<br>
                             <span>To: </span>${email['recipients'].join('; ')}<br>
@@ -88,7 +121,7 @@ function view_email(email_id) {
                             <button class="btn btn-sm btn-outline-primary" id="reply">Reply</button>
                             <button class="btn btn-sm btn-outline-primary" id="archive">Archive</button><br>
                             <hr>
-                            <div id="email-body">${email['body']}</div>`;
+                            <div id="email-body">${email_body}</div>`;
 
         header.id = "email-header";
 
@@ -133,6 +166,8 @@ function view_email(email_id) {
             document.querySelector('#archive').remove();
         }
 
+        // REPLY event
+        document.querySelector('#reply').addEventListener('click', () => reply(email));
 
      });
 

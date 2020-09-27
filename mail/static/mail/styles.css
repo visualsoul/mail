@@ -53,3 +53,6 @@ textarea {
     border: 2px solid black;
 }
 
+#emails-view {
+    padding-bottom: 40px;
+}
