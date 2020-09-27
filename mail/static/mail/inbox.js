@@ -33,9 +33,10 @@ function send_email(event){
           document.querySelector('#compose-subject').value = '';
           document.querySelector('#compose-body').value = '';
           document.querySelector('#error-message').innerHTML = '';
+
           if (result['error']) {
               console.log(result['error']);
-              document.querySelector('#error-message').innerHTML = "Error: " + result['error'];
+              document.querySelector('#error-message').innerHTML = result['error'];
 
           }
           else {
@@ -65,7 +66,7 @@ function reply(email) {
     let body = email.body;
 
     // check for 'RE:'
-    if (subject.substring(0,3) !== 'RE:') {
+    if (subject.substring(0,4) !== 'RE: ') {
         subject = 'RE: ' + subject;
     }
     // format email body as per assignment
@@ -78,19 +79,18 @@ function reply(email) {
 
 
 function compose_email() {
-  // Show compose view and hide other views
-  document.querySelector('#emails-view').style.display = 'none';
-  document.querySelector('#compose-view').style.display = 'block';
-  document.querySelector('#email-view').style.display = 'none';
+    // Show compose view and hide other views
+    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#compose-view').style.display = 'block';
+    document.querySelector('#email-view').style.display = 'none';
 
-  // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
-  document.querySelector('#error-message').innerHTML = '';
+    // Clear out composition fields
+    document.querySelector('#compose-recipients').value = '';
+    document.querySelector('#compose-subject').value = '';
+    document.querySelector('#compose-body').value = '';
+    document.querySelector('#error-message').innerHTML = '';
 
 }
-
 
 function view_email(email_id) {
     document.querySelector('#email-view').style.display = 'block';
