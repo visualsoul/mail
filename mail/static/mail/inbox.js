@@ -9,7 +9,58 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // By default, load the inbox
   load_mailbox('inbox');
+
+  // On Submit listener for the #compose-form
+  document.querySelector('#compose-recipients').value = '';
+  document.querySelector('#compose-subject').value = '';
+  document.querySelector('#compose-body').value = '';
+  document.querySelector('#compose-form').onsubmit = () => {
+    let recipients = document.querySelector('#compose-recipients').value;
+    let subject = document.querySelector('#compose-subject').value;
+    let body = document.querySelector('#compose-body').value;
+
+    // POST email to API
+    fetch('/emails', {
+      method: 'POST',
+      body: JSON.stringify({
+        recipients: recipients,
+        subject: subject,
+        body: body
+      })
+    })
+      .then(response => response.json())
+      .then(result => {
+        // Print result
+        console.log(result);
+
+
+        load_mailbox('sent');
+      });
+      document.querySelector('#compose-recipients').value = '';
+      document.querySelector('#compose-subject').value = '';
+      document.querySelector('#compose-body').value = '';
+    return false;
+    window.location.reload();
+    load_mailbox('sent');
+  }
+
 });
+
+
+
+function compose_email() {
+  // Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#display-view').style.display = 'none';
+
+  // Clear out composition fields
+  document.querySelector('#compose-recipients').value = '';
+  document.querySelector('#compose-subject').value = '';
+  document.querySelector('#compose-body').value = '';
+
+}
+
 
 
 function view_email(email_id) {
@@ -50,8 +101,6 @@ function view_email(email_id) {
         });
 
     //TODO:  Add event handlers for Reply and Archive Buttons
-
-
 
 }
 
@@ -118,44 +167,6 @@ function load_mailbox(mailbox) {
 
 });
 
-
-
 }
 
-
-function compose_email() {
-  // Show compose view and hide other views
-  document.querySelector('#email-view').style.display = 'none';
-  document.querySelector('#emails-view').style.display = 'none';
-  document.querySelector('#compose-view').style.display = 'block';
-
-  // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
-
-  document.querySelector('#submit_mail').addEventListener('click', () => {
-      fetch('/emails', {
-      method: 'POST',
-      body: JSON.stringify({
-      recipients: document.querySelector('#compose-recipients').value,
-      subject: document.querySelector('#compose-subject').value,
-      body: document.querySelector('#compose-body').value
-        })
-        })
-        .then(response => response.json())
-        .then(result => {
-        // Print result
-        console.log(result);
-        load_mailbox('sent');
-    })
-
-
-
-  })
-
-
-
-
-}
 
