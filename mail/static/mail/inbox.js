@@ -97,11 +97,27 @@ function view_email(email_id) {
                             <hr>
                             <div id="email-body">${email['body']}</div>`;
         header.id = "email-header";
+
+
         div.append(header);
+
+        document.querySelector('#archive').addEventListener('click', () => {
+            fetch(`/emails/${email_id}`, {
+              method: 'PUT',
+              body: JSON.stringify({
+                  archived: true
+              })
+
+            })
+
+
         });
 
-    //TODO:  Add event handlers for Reply and Archive Buttons
+        });
 
+
+    //TODO:  Add event handlers for Reply and Archive Buttons
+    load_mailbox('inbox');
 }
 
 
