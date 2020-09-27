@@ -122,7 +122,7 @@ function view_email(email_id) {
 
                 })
                 // load_mailbox('archive');
-                setTimeout(function() { load_mailbox('archive'); }, 250);
+                setTimeout(function() { load_mailbox('inbox'); }, 250);
 
             });
         }
